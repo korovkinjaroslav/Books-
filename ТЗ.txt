@@ -28,7 +28,6 @@
         autor
         category
         year
-        description
         cover
         average_rating
     Таблица ratings
