@@ -23,6 +23,7 @@
 2.База данных
     Таблица books
         id
+        isbn
         title
         autor
         category
