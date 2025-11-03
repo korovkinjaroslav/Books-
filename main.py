@@ -1,6 +1,6 @@
 import sqlite3
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel, QFileDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6 import uic
@@ -13,6 +13,9 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
         self.setGeometry(300, 300, 800, 600)
+
+    def closeEvent(self, a0):
+        connect.close()
 
 
 class BookWindow(QWidget):
@@ -32,6 +35,19 @@ class BookWindow(QWidget):
         self.categories.setText(cursor.execute(f"""SELECT name FROM categories 
         WHERE id={self.book.info['id']}""").fetchone()[0])
         self.year.setText(str(self.book.info['year']))
+        self.change_cover_button.clicked.connect(self.change_cover)
+
+    def change_cover(self):
+        new_cover = QFileDialog.getOpenFileName(self, 'Выбрать обложку', '')[0]
+        cover_pixmap = QPixmap(new_cover)
+        self.cover.setPixmap(cover_pixmap)
+        self.book.info['cover'] = new_cover
+        try:
+            print(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
+            cursor.execute(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
+            connect.commit()
+        except Exception as e:
+            print(e)
 
 
 class Book:
