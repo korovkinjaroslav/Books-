@@ -1,7 +1,9 @@
 import sqlite3
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap
+from PyQt6 import uic
 
 
 class MainWindow(QMainWindow):
@@ -17,20 +19,19 @@ class BookWindow(QWidget):
     def __init__(self, book):
         super().__init__()
         self.book = book
+        uic.loadUi('BookWindow_design.ui', self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 400, 600)
         self.setWindowTitle('Оображение книги')
-        self.title = QLineEdit(self)
         self.title.setText(self.book.info['title'])
-        self.title.move(10, 10)
-        self.title.resize(380, 50)
-        self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        f = self.title.font()
-        f.setPointSize(15)
-        self.title.setFont(f)
-        self.title.setReadOnly(True)
+        cover_pixmap = QPixmap(self.book.info['cover'])
+        self.cover.setPixmap(cover_pixmap)
+        self.cover.setScaledContents(True)
+        self.authors.setText(self.book.info['authors'])
+        self.categories.setText(cursor.execute(f"""SELECT name FROM categories 
+        WHERE id={self.book.info['id']}""").fetchone()[0])
+        self.year.setText(str(self.book.info['year']))
 
 
 class Book:
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
-    # book = Book("""SELECT * FROM books WHERE id=1""")
-    # bw = BookWindow(book)
-    # bw.show()
+    book = Book("""SELECT * FROM books WHERE id=1""")
+    bw = BookWindow(book)
+    bw.show()
     sys.exit(app.exec())
