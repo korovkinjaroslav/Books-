@@ -42,12 +42,8 @@ class BookWindow(QWidget):
         cover_pixmap = QPixmap(new_cover)
         self.cover.setPixmap(cover_pixmap)
         self.book.info['cover'] = new_cover
-        try:
-            print(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
-            cursor.execute(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
-            connect.commit()
-        except Exception as e:
-            print(e)
+        cursor.execute(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
+        connect.commit()
 
 
 class Book:
