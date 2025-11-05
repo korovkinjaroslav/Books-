@@ -9,10 +9,11 @@ from PyQt6 import uic
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        uic.loadUi('MainWindow_design.ui', self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 800, 600)
+        pass
 
     def closeEvent(self, a0):
         connect.close()
