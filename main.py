@@ -3,7 +3,7 @@ import sys
 from pickletools import read_decimalnl_short
 
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel, QFileDialog, QScrollArea, \
-    QVBoxLayout, QPushButton
+    QVBoxLayout, QPushButton, QInputDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from PyQt6 import uic
@@ -51,6 +51,7 @@ class BookWindow(QWidget):
             WHERE id={self.book.info['category']}""").fetchone()[0])
             self.year.setText(str(self.book.info['year']))
             self.change_cover_button.clicked.connect(self.change_cover)
+            self.rate_button.clicked.connect(self.rate)
         except Exception as e:
             self.statusBar().showMessage('Извините, возникла ошибка')
 
@@ -61,6 +62,14 @@ class BookWindow(QWidget):
         self.book.info['cover'] = new_cover
         cursor.execute(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
         connect.commit()
+
+    def rate(self):
+        number, ok = QInputDialog.getInt(
+            self,
+            "Оценка книги", "Введите вашу оценку (от 1 до 10)",
+            value=1, min=1, max=10, step=1)
+        if ok:
+            print('ok')
 
 
 class ReadedBooksWindow(QWidget):
