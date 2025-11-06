@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>406</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,13 +19,13 @@
      <x>10</x>
      <y>10</y>
      <width>401</width>
-     <height>31</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Sitka Text Semibold</family>
-     <pointsize>20</pointsize>
+     <pointsize>14</pointsize>
      <bold>true</bold>
     </font>
    </property>
@@ -40,7 +40,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>50</y>
+     <y>70</y>
      <width>191</width>
      <height>271</height>
     </rect>
@@ -52,8 +52,8 @@
   <widget class="QLabel" name="lbl">
    <property name="geometry">
     <rect>
-     <x>208</x>
-     <y>50</y>
+     <x>210</x>
+     <y>60</y>
      <width>211</width>
      <height>31</height>
     </rect>
@@ -71,7 +71,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>90</y>
+     <y>100</y>
      <width>201</width>
      <height>51</height>
     </rect>
@@ -92,7 +92,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>140</y>
+     <y>150</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -113,7 +113,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>180</y>
+     <y>190</y>
      <width>191</width>
      <height>61</height>
     </rect>
@@ -134,7 +134,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>240</y>
+     <y>260</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -155,7 +155,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>280</y>
+     <y>300</y>
      <width>201</width>
      <height>31</height>
     </rect>
@@ -175,8 +175,8 @@
   <widget class="QPushButton" name="change_cover_button">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>330</y>
+     <x>0</x>
+     <y>350</y>
      <width>411</width>
      <height>31</height>
     </rect>
@@ -188,8 +188,8 @@
   <widget class="QPushButton" name="rate_button">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>370</y>
+     <x>0</x>
+     <y>390</y>
      <width>411</width>
      <height>31</height>
     </rect>

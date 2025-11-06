@@ -80,7 +80,7 @@ class SearchBookWindow(QWidget):
 
     def initUI(self):
         try:
-            self.books_layout = QVBoxLayout(self.qwidget)
+            self.books_layout = BooksLayout(self.qwidget)
             self.button_font = QFont()
             self.button_font.setPointSize(12)
             self.scroll_area.setWidgetResizable(True)
@@ -90,24 +90,12 @@ class SearchBookWindow(QWidget):
 
     def search(self):
         try:
-            while self.books_layout.count():
-                item = self.books_layout.takeAt(0)
-                if item:
-                    widget = item.widget()
-                    if widget:
-                        widget.deleteLater()
             print(f'''SELECT * FROM books WHERE title LIKE "%{self.title_edit.text()}%"''')
             res = cursor.execute(f'''SELECT * FROM books WHERE title LIKE "%{self.title_edit.text()}%"''').fetchall()
-            print(res)
-            for info in res:
-                button = QPushButton(info[1])
-                button.setMinimumHeight(50)
-                button.setMaximumWidth(540)
-                button.setFont(self.button_font)
-                button.clicked.connect(self.open)
-                self.books_layout.addWidget(button)
+            self.books_layout.show_books(res, self)
         except Exception as e:
             self.statusBar().showMessage('Извините, возникла ошибка')
+            print(e)
 
     def open(self):
         try:
@@ -135,6 +123,32 @@ class Book:
         print('creating successful')
         self.window = BookWindow(self)
         self.window.show()
+
+
+class BooksLayout(QVBoxLayout):
+    def __init__(self, window):
+        try:
+            super().__init__(window)
+        except Exception as e:
+            print(e)
+
+    def show_books(self, res, window):
+        try:
+            while self.count():
+                item = self.takeAt(0)
+                if item:
+                    widget = item.widget()
+                    if widget:
+                        widget.deleteLater()
+            for info in res:
+                button = QPushButton(info[1])
+                button.setMinimumHeight(50)
+                button.setMaximumWidth(540)
+                button.setFont(window.button_font)
+                button.clicked.connect(window.open)
+                self.addWidget(button)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
