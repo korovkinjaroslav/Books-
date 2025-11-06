@@ -1,5 +1,7 @@
 import sqlite3
 import sys
+from pickletools import read_decimalnl_short
+
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel, QFileDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
@@ -9,10 +11,15 @@ from PyQt6 import uic
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        uic.loadUi('MainWindow_design.ui', self)
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 800, 600)
+        self.readed_button.clicked.connect(self.open_readed)
+
+    def open_readed(self):
+        self.readed = ReadedBooksWindow()
+        self.readed.show()
 
     def closeEvent(self, a0):
         connect.close()
@@ -61,6 +68,15 @@ class Book:
     def show(self):
         window = BookWindow(self)
         window.show()
+
+
+class ReadedBooksWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setGeometry(300, 300, 300, 300)
 
 
 if __name__ == '__main__':
