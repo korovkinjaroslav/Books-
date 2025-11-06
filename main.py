@@ -68,8 +68,16 @@ class BookWindow(QWidget):
             self,
             "Оценка книги", "Введите вашу оценку (от 1 до 10)",
             value=1, min=1, max=10, step=1)
+        print(ok)
         if ok:
-            print('ok')
+            if cursor.execute(f"""SELECT * FROM ratings WHERE id = {self.book.info['id']}""").fetchone():
+                print('Было')
+                cursor.execute(f"""UPDATE ratings SET rating = {number} WHERE id = {self.book.info['id']}""")
+                connect.commit()
+            else:
+                print('Не было')
+                cursor.execute(f"""INSERT INTO ratings(id, rating) VALUES({self.book.info['id']}, {number})""")
+                connect.commit()
 
 
 class ReadedBooksWindow(QWidget):
