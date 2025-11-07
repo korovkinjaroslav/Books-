@@ -78,18 +78,39 @@ class BookWindow(QWidget):
                 connect.commit()
             try:
                 self.ids = cursor.execute("""SELECT * FROM ratings""").fetchall()
+                print(self.ids)
                 self.average_ratings = [0, 0, 0, 0]
-                for id in self.ids:
+                for book in self.ids:
+                    id = book[0]
+                    rate = book[1]
                     self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
-                    if self.book2.info['category'] == self.book.category:
+                    print(self.book2.info)
+                    if self.book2.info['category'] == self.book.info['category']:
                         self.average_ratings[0] += 1
-                        self.average_ratings[1] += cursor.execute(f"""
-                        SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
-                    if self.book.info['authors'] == self.book.info['authors']:
+                        self.average_ratings[1] += rate
+                    if self.book2.info['authors'] == self.book.info['authors']:
                         self.average_ratings[2] += 1
-                        self.average_ratings[3] += cursor.execute(f"""
-                        SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
+                        self.average_ratings[3] += rate
                 print(self.average_ratings)
+                id_category = cursor.execute(f"""
+                        SELECT id FROM category_preferences WHERE id = {self.book.info['category']}""").fetchone()
+                if not id_category:
+                    cursor.execute(f"""INSERT INTO category_preferences(id, rating)
+                     VALUES({self.book.info['category']}, {self.average_ratings[1] / self.average_ratings[0]})""")
+                else:
+                    cursor.execute(f"""
+                        UPDATE category_preferences SET rating = {self.average_ratings[1] / self.average_ratings[0]}
+                        WHERE id = {self.book.info['category']}""")
+                author = cursor.execute(f"""
+                                        SELECT id FROM author_preferences WHERE author = {self.book.info['author']}""").fetchone()
+                if not author:
+                    cursor.execute(f"""INSERT INTO author_preferences(author, rating)
+                                     VALUES({self.book.info['author']}, {self.average_ratings[1] / self.average_ratings[0]})""")
+                else:
+                    cursor.execute(f"""
+                                        UPDATE author_preferences SET rating = {self.average_ratings[1] / self.average_ratings[0]}
+                                        WHERE author = {self.book.info['author']}""")
+
             except Exception as e:
                 print(e)
 
