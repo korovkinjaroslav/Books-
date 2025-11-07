@@ -78,23 +78,20 @@ class BookWindow(QWidget):
                 connect.commit()
             try:
                 self.ids = cursor.execute("""SELECT * FROM ratings""").fetchall()
-                print(self.ids)
                 self.average_ratings = [0, 0, 0, 0]
                 for book in self.ids:
                     id = book[0]
                     rate = book[1]
                     self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
-                    print(self.book2.info)
                     if self.book2.info['category'] == self.book.info['category']:
                         self.average_ratings[0] += 1
                         self.average_ratings[1] += rate
                     if self.book2.info['authors'] == self.book.info['authors']:
                         self.average_ratings[2] += 1
                         self.average_ratings[3] += rate
-                print(self.average_ratings)
+
                 id_category = cursor.execute(f"""
                         SELECT id FROM category_preferences WHERE id = {self.book.info['category']}""").fetchone()
-                print(id_category)
                 if id_category is None:
                     cursor.execute(f"""INSERT INTO category_preferences(id, rating)
                      VALUES({self.book.info['category']}, {self.average_ratings[1] / self.average_ratings[0]})""")
@@ -102,7 +99,6 @@ class BookWindow(QWidget):
                     cursor.execute(f"""
                         UPDATE category_preferences SET rating = {self.average_ratings[1] / self.average_ratings[0]}
                         WHERE id = {self.book.info['category']}""")
-                print('qwert')
                 author = cursor.execute(f'''
                                         SELECT id FROM autor_preferences 
                                         WHERE autor = "{self.book.info['authors']}"''').fetchone()
