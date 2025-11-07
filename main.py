@@ -43,8 +43,8 @@ class BookWindow(QWidget):
             self.setWindowTitle('Отбражение книги')
             self.title.setText(self.book.info['title'])
             self.title.setWordWrap(True)
-            cover_pixmap = QPixmap(self.book.info['cover'])
-            self.cover.setPixmap(cover_pixmap)
+            self.cover_pixmap = QPixmap(self.book.info['cover'])
+            self.cover.setPixmap(self.cover_pixmap)
             self.cover.setScaledContents(True)
             self.authors.setText(self.book.info['authors'])
             self.categories.setText(cursor.execute(f"""SELECT name FROM categories 
@@ -56,28 +56,39 @@ class BookWindow(QWidget):
             self.statusBar().showMessage('Извините, возникла ошибка')
 
     def change_cover(self):
-        new_cover = QFileDialog.getOpenFileName(self, 'Выбрать обложку', '')[0]
-        cover_pixmap = QPixmap(new_cover)
-        self.cover.setPixmap(cover_pixmap)
-        self.book.info['cover'] = new_cover
-        cursor.execute(f"""UPDATE books SET cover = '{new_cover}' WHERE id = {self.book.info['id']}""")
+        self.new_cover = QFileDialog.getOpenFileName(self, 'Выбрать обложку', '')[0]
+        self.cover_pixmap = QPixmap(self.new_cover)
+        self.cover.setPixmap(self.cover_pixmap)
+        self.book.info['cover'] = self.new_cover
+        cursor.execute(f"""UPDATE books SET cover = '{self.new_cover}' WHERE id = {self.book.info['id']}""")
         connect.commit()
 
     def rate(self):
-        number, ok = QInputDialog.getInt(
+        self.number, self.ok = QInputDialog.getInt(
             self,
             "Оценка книги", "Введите вашу оценку (от 1 до 10)",
             value=1, min=1, max=10, step=1)
-        print(ok)
-        if ok:
+        print(self.ok)
+        if self.ok:
             if cursor.execute(f"""SELECT * FROM ratings WHERE id = {self.book.info['id']}""").fetchone():
-                print('Было')
-                cursor.execute(f"""UPDATE ratings SET rating = {number} WHERE id = {self.book.info['id']}""")
+                cursor.execute(f"""UPDATE ratings SET rating = {self.number} WHERE id = {self.book.info['id']}""")
                 connect.commit()
             else:
-                print('Не было')
-                cursor.execute(f"""INSERT INTO ratings(id, rating) VALUES({self.book.info['id']}, {number})""")
+                cursor.execute(f"""INSERT INTO ratings(id, rating) VALUES({self.book.info['id']}, {self.number})""")
                 connect.commit()
+            self.ids = cursor.execute("""SELECT * FROM ratings""").fetchall()
+            self.average_ratings = [0, 0, 0, 0]
+            for id in self.ids:
+                self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
+                if self.book2.info['category'] == self.book.category:
+                    self.average_ratings[0] += 1
+                    self.average_ratings[1] += cursor.execute(f"""
+                    SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
+                if self.book.info['authors'] == self.book.info['authors']:
+                    self.average_ratings[2] += 1
+                    self.average_ratings[3] += cursor.execute(f"""
+                    SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
+            print(self.average_ratings)
 
 
 class ReadedBooksWindow(QWidget):
