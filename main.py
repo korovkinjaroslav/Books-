@@ -110,7 +110,7 @@ class BookWindow(QWidget):
                     cursor.execute(f"""
                                         UPDATE author_preferences SET rating = {self.average_ratings[1] / self.average_ratings[0]}
                                         WHERE author = {self.book.info['author']}""")
-
+                connect.commit()
             except Exception as e:
                 print(e)
 
