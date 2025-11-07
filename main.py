@@ -94,6 +94,7 @@ class BookWindow(QWidget):
                 print(self.average_ratings)
                 id_category = cursor.execute(f"""
                         SELECT id FROM category_preferences WHERE id = {self.book.info['category']}""").fetchone()
+                print(id_category)
                 if not id_category:
                     cursor.execute(f"""INSERT INTO category_preferences(id, rating)
                      VALUES({self.book.info['category']}, {self.average_ratings[1] / self.average_ratings[0]})""")
@@ -103,6 +104,7 @@ class BookWindow(QWidget):
                         WHERE id = {self.book.info['category']}""")
                 author = cursor.execute(f"""
                                         SELECT id FROM author_preferences WHERE author = {self.book.info['author']}""").fetchone()
+                author
                 if not author:
                     cursor.execute(f"""INSERT INTO author_preferences(author, rating)
                                      VALUES({self.book.info['author']}, {self.average_ratings[1] / self.average_ratings[0]})""")
