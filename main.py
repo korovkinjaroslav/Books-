@@ -76,19 +76,22 @@ class BookWindow(QWidget):
             else:
                 cursor.execute(f"""INSERT INTO ratings(id, rating) VALUES({self.book.info['id']}, {self.number})""")
                 connect.commit()
-            self.ids = cursor.execute("""SELECT * FROM ratings""").fetchall()
-            self.average_ratings = [0, 0, 0, 0]
-            for id in self.ids:
-                self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
-                if self.book2.info['category'] == self.book.category:
-                    self.average_ratings[0] += 1
-                    self.average_ratings[1] += cursor.execute(f"""
-                    SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
-                if self.book.info['authors'] == self.book.info['authors']:
-                    self.average_ratings[2] += 1
-                    self.average_ratings[3] += cursor.execute(f"""
-                    SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
-            print(self.average_ratings)
+            try:
+                self.ids = cursor.execute("""SELECT * FROM ratings""").fetchall()
+                self.average_ratings = [0, 0, 0, 0]
+                for id in self.ids:
+                    self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
+                    if self.book2.info['category'] == self.book.category:
+                        self.average_ratings[0] += 1
+                        self.average_ratings[1] += cursor.execute(f"""
+                        SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
+                    if self.book.info['authors'] == self.book.info['authors']:
+                        self.average_ratings[2] += 1
+                        self.average_ratings[3] += cursor.execute(f"""
+                        SELECT rating FROM ratings WHERE id={self.book2.info['id']}""").fetchone()[0]
+                print(self.average_ratings)
+            except Exception as e:
+                print(e)
 
 
 class ReadedBooksWindow(QWidget):
