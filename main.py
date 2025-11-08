@@ -176,6 +176,27 @@ class Book:
         self.window = BookWindow(self)
         self.window.show()
 
+    def id(self):
+        return self.info['id']
+
+    def title(self):
+        return self.info['title']
+
+    def category(self):
+        return self.info['category']
+
+    def authors(self):
+        return self.info['authors']
+
+    def year(self):
+        return self.info['year']
+
+    def cover(self):
+        return self.info['cover']
+
+    def rating(self):
+        return self.info['rating']
+
 
 class BooksLayout(QVBoxLayout):
     def __init__(self, window):
