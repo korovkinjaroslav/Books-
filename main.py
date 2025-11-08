@@ -18,6 +18,7 @@ class MainWindow(QMainWindow):
     def initUI(self):
         self.search_button.clicked.connect(self.open_search_book)
         self.readed_button.clicked.connect(self.open_readed)
+        self.parameters_search_button.clicked.connect(self.open_parameters_search)
 
     def open_readed(self):
         self.readed = ReadedBooksWindow()
@@ -27,8 +28,13 @@ class MainWindow(QMainWindow):
         self.search_book = SearchBookWindow()
         self.search_book.show()
 
+    def open_parameters_search(self):
+        self.parameters_search = SearchParametersWindow()
+        self.parameters_search.show()
+
     def closeEvent(self, a0):
         connect.close()
+
 
 
 class BookWindow(QWidget):
@@ -168,6 +174,18 @@ class ReadedBooksWindow(QWidget):
     def open(self):
         self.book = Book(f'''SELECT * FROM books WHERE title="{self.sender().text()}"''')
         self.book.show()
+
+
+class SearchParametersWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('SearchParametersWindow_design.ui', self)
+        self.initUI()
+
+    def initUI(self):
+        self.categories = cursor.execute(f'''SELECT name FROM categories ''').fetchall()
+        for category in self.categories:
+            self.category_box.addItem(category[0])
 
 
 class Book:
