@@ -115,15 +115,6 @@ class BookWindow(QWidget):
                 print(e, 'ERROR')
 
 
-class ReadedBooksWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        self.setGeometry(300, 300, 300, 300)
-
-
 class SearchBookWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -155,6 +146,28 @@ class SearchBookWindow(QWidget):
             self.book.show()
         except Exception as e:
             self.statusBar().showMessage('Извините, возникла ошибка')
+
+
+class ReadedBooksWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('ReadedWindow_design.ui', self)
+        self.initUI()
+
+    def initUI(self):
+        self.button_font = QFont()
+        self.button_font.setPointSize(12)
+        self.ids = cursor.execute("""SELECT id FROM ratings""").fetchall()
+        self.books = []
+        for id in self.ids:
+            self.books.append(cursor.execute(f'''SELECT * FROM books WHERE id={id[0]}''').fetchone())
+        self.books_layout = BooksLayout(self.qwidget)
+        self.scroll_area.setWidgetResizable(True)
+        self.books_layout.show_books(self.books, self)
+
+    def open(self):
+        self.book = Book(f'''SELECT * FROM books WHERE title="{self.sender().text()}"''')
+        self.book.show()
 
 
 class Book:
