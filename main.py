@@ -1,6 +1,6 @@
 import sqlite3
 import sys
-from pickletools import read_decimalnl_short
+import csv
 
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel, QFileDialog, QScrollArea, \
     QVBoxLayout, QPushButton, QInputDialog
@@ -183,6 +183,7 @@ class SearchParametersWindow(QWidget):
         for category in self.categories:
             self.category_box.addItem(category[0])
         self.search_button.clicked.connect(self.search)
+        self.csv_button.clicked.connect(self.save_csv)
 
     def search(self):
         query = f'''SELECT * FROM books WHERE title LIKE "%{self.title_edit.text()}%" 
@@ -192,12 +193,26 @@ class SearchParametersWindow(QWidget):
         if self.category_box.currentText() != 'Не выбрано':
             query += f'''AND category = (SELECT id FROM categories 
             WHERE name = "{self.category_box.currentText()}")'''
-        books = cursor.execute(query).fetchall()
-        self.books_layout.show_books(Recommender(books).recommend(15), self)
+        self.books = Recommender(cursor.execute(query).fetchall()).recommend(15)
+        self.books_layout.show_books(self.books, self)
 
     def open(self):
         self.book = Book(f'''SELECT * FROM books WHERE title="{self.sender().text()}"''')
         self.book.show()
+
+    def save_csv(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Сохранить как", "", "CSV files (*.csv);;All files (*)"
+        )
+        if not path:
+            return
+        with open(path, 'w', encoding='utf-8') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(['title', 'category', 'authors', 'year', 'rating on Goodreads'])
+            for book in self.books:
+                writer.writerow([book[1],
+                                 cursor.execute(f'''SELECT name FROM categories WHERE id={book[2]}''').fetchone()[0],
+                                 ', '.join(book[3].split(';')), book[-3], book[-1]])
 
 
 class RecommendationsWindow(QWidget):
@@ -212,12 +227,27 @@ class RecommendationsWindow(QWidget):
         self.button_font = QFont()
         self.button_font.setPointSize(12)
         self.scroll_area.setWidgetResizable(True)
-        self.books_layout.show_books(
-            Recommender(cursor.execute("""SELECT * FROM books""").fetchall()).recommend(15), self)
+        self.books = Recommender(cursor.execute("""SELECT * FROM books""").fetchall()).recommend(15)
+        self.books_layout.show_books(self.books, self)
+        self.csv_button.clicked.connect(self.save_csv)
 
     def open(self):
         self.book = Book(f'''SELECT * FROM books WHERE title="{self.sender().text()}"''')
         self.book.show()
+
+    def save_csv(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Сохранить как", "", "CSV files (*.csv);;All files (*)"
+        )
+        if not path:
+            return
+        with open(path, 'w', encoding='utf-8') as f:
+            writer = csv.writer(f, delimiter=';')
+            writer.writerow(['title', 'category', 'authors', 'year', 'rating on Goodreads'])
+            for book in self.books:
+                writer.writerow([book[1],
+                                 cursor.execute(f'''SELECT name FROM categories WHERE id={book[2]}''').fetchone()[0],
+                                 ', '.join(book[3].split(';')), book[-3], book[-1]])
 
 
 class Book:

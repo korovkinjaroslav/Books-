@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>571</width>
-    <height>590</height>
+    <height>651</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -217,6 +217,24 @@
    </property>
    <property name="text">
     <string>Искать</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="csv_button">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>600</y>
+     <width>551</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Экспортировать как csv</string>
    </property>
   </widget>
  </widget>
