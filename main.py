@@ -8,6 +8,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from PyQt6 import uic
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -33,7 +34,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, a0):
         connect.close()
-
 
 
 class BookWindow(QWidget):
@@ -88,7 +88,7 @@ class BookWindow(QWidget):
                     id = book[0]
                     rate = book[1]
                     self.book2 = Book(f"""SELECT * FROM books WHERE id={id}""")
-                    if self.book2.category()== self.book.category():
+                    if self.book2.category() == self.book.category():
                         self.average_ratings[0] += 1
                         self.average_ratings[1] += rate
                     if self.book2.authors() == self.book.authors():
@@ -182,9 +182,30 @@ class SearchParametersWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.books_layout = BooksLayout(self.qwidget)
+        self.button_font = QFont()
+        self.button_font.setPointSize(12)
+        self.scroll_area.setWidgetResizable(True)
         self.categories = cursor.execute(f'''SELECT name FROM categories ''').fetchall()
+        self.category_box.addItem('Не выбрано')
         for category in self.categories:
             self.category_box.addItem(category[0])
+        self.search_button.clicked.connect(self.search)
+
+    def search(self):
+        query = f'''SELECT * FROM books WHERE title LIKE "%{self.title_edit.text()}%" 
+                                        AND autor LIKE "%{self.author_edit.text()}%" '''
+        if self.year_edit.text() != '':
+            query += f'AND year = {int(self.year_edit.text())} '
+        if self.category_box.currentText() != 'Не выбрано':
+            query += f'''AND category = (SELECT id FROM categories 
+            WHERE name = "{self.category_box.currentText()}")'''
+        books = cursor.execute(query).fetchall()
+        self.books_layout.show_books(Recommender(books).recommend(15), self)
+
+    def open(self):
+        self.book = Book(f'''SELECT * FROM books WHERE title="{self.sender().text()}"''')
+        self.book.show()
 
 
 class Book:
@@ -254,6 +275,38 @@ class BooksLayout(QVBoxLayout):
             print(e)
 
 
+class Recommender:
+    def __init__(self, books):
+        self.books = books
+
+    def recommend(self, n):
+        for i in range(len(self.books)):
+            self.books[i] = list(self.books[i])
+            index = 1
+            category_rating = cursor.execute(f'''SELECT rating FROM category_preferences 
+            WHERE id={self.books[i][2]}''').fetchone()
+            if category_rating is None:
+                category_rating = 7
+            else:
+                category_rating = category_rating[0]
+            index *= category_rating
+            author_rating = cursor.execute(f'''SELECT rating FROM autor_preferences 
+            WHERE autor="{self.books[i][3]}"''').fetchone()
+            if author_rating is None:
+                author_rating = 7
+            else:
+                author_rating = author_rating[0]
+            index *= author_rating
+            if self.books[i][-1] == '':
+                self.books[i][-1] = '3.5'
+            index *= float(self.books[i][-1]) * 2
+            self.books[i].append(index)
+        self.books = sorted(self.books, key=lambda x: x[-1])
+        for i in range(len(self.books)):
+            self.books[i] = self.books[i][:-1]
+        return self.books[:min(n, len(self.books))]
+
+
 if __name__ == '__main__':
     connect = sqlite3.connect("DB.sqlite")
     cursor = connect.cursor()
@@ -262,7 +315,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
-    # book = Book("""SELECT * FROM books WHERE id=1""")
-    # bw = BookWindow(book)
-    # bw.show()
     sys.exit(app.exec())
