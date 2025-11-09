@@ -5,7 +5,7 @@ import csv
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLineEdit, QLabel, QFileDialog, QScrollArea, \
     QVBoxLayout, QPushButton, QInputDialog
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap, QFont
+from PyQt6.QtGui import QPixmap, QFont, QIcon
 from PyQt6 import uic
 
 
@@ -17,6 +17,8 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.search_button.clicked.connect(self.open_search_book)
         self.readed_button.clicked.connect(self.open_readed)
         self.parameters_search_button.clicked.connect(self.open_parameters_search)
@@ -51,7 +53,8 @@ class BookWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('Отбражение книги')
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.title.setText(self.book.title())
         self.title.setWordWrap(True)
         self.cover_pixmap = QPixmap(self.book.cover())
@@ -130,6 +133,8 @@ class SearchBookWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.books_layout = BooksLayout(self.qwidget)
         self.button_font = QFont()
         self.button_font.setPointSize(12)
@@ -153,6 +158,10 @@ class ReadedBooksWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.button_font = QFont()
         self.button_font.setPointSize(12)
         self.ids = cursor.execute("""SELECT id FROM ratings""").fetchall()
@@ -176,6 +185,8 @@ class SearchParametersWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.books_layout = BooksLayout(self.qwidget)
         self.button_font = QFont()
         self.button_font.setPointSize(12)
@@ -225,6 +236,8 @@ class RecommendationsWindow(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Book_rec')
+        self.setWindowIcon(QIcon('icon.png'))
         self.books_layout = BooksLayout(self.qwidget)
         self.button_font = QFont()
         self.button_font.setPointSize(12)
