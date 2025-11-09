@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
+    <width>425</width>
     <height>432</height>
    </rect>
   </property>
@@ -175,7 +175,7 @@
   <widget class="QPushButton" name="change_cover_button">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>350</y>
      <width>411</width>
      <height>31</height>
@@ -188,7 +188,7 @@
   <widget class="QPushButton" name="rate_button">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>390</y>
      <width>411</width>
      <height>31</height>
