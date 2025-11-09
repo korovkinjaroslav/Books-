@@ -66,6 +66,8 @@ class BookWindow(QWidget):
 
     def change_cover(self):
         self.new_cover = QFileDialog.getOpenFileName(self, 'Выбрать обложку', '')[0]
+        if not self.new_cover:
+            return
         self.cover_pixmap = QPixmap(self.new_cover)
         self.cover.setPixmap(self.cover_pixmap)
         self.book.info['cover'] = self.new_cover
