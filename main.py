@@ -333,6 +333,8 @@ class Recommender:
     def recommend(self, n):
         for i in range(len(self.books)):
             self.books[i] = list(self.books[i])
+            if not cursor.execute(f'''SELECT * FROM ratings WHERE id = {self.books[i][0]}''').fetchone() is None:
+                del self.books[i]
             index = 1
             category_rating = cursor.execute(f'''SELECT rating FROM category_preferences 
             WHERE id={self.books[i][2]}''').fetchone()
