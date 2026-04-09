@@ -55,7 +55,8 @@ class BookWindow(QWidget):
     def initUI(self):
         self.setWindowTitle('Book_rec')
         self.setWindowIcon(QIcon('icon.png'))
-        self.title.setText(self.book.title())
+        self.title.setText(f'<a href="https://yandex.ru/search/?text=Книга {self.book.title()}">{self.book.title()}</a>')
+        self.title.setOpenExternalLinks(True)
         self.title.setWordWrap(True)
         self.cover_pixmap = QPixmap(self.book.cover())
         self.cover.setPixmap(self.cover_pixmap)
